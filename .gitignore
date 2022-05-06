@@ -1,0 +1,15 @@
+figwheel_server.log
+pom.xml
+*jar
+/lib/
+/classes/
+/out/
+/target/
+.repl
+.nrepl-port
+node_modules/
+yarn.lock
+.cpcache/
+.shadow-cljs/
+resources/public/dist/**
+resources/public/js/main/**
