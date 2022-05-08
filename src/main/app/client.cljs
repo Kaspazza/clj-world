@@ -7,12 +7,12 @@
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.data-fetch :as df]))
 
-(declare category-header)
-
 (defsc Content [this {:content/keys [id type text] :as props}]
   {:query [:content/id :content/type :content/text]
    :ident (fn [] [:content/id (:content/id props)])}
-  (dom/div "Content"))
+  (dom/div "Content" id))
+
+(def ui-content (comp/factory Content))
 
 (defsc CategoryHeader
   [this {:category/keys [id name href content] :ui/keys [first? last?]}]
@@ -45,11 +45,9 @@
     (dom/nav {:classes ["relative z-0 rounded-lg shadow flex divide-x divide-gray-200"] :aria-label "Tabs"}
       (ui-category-header projects)
       (ui-category-header theory)
-      (ui-category-header exercises)
-      ;(category-header this {:type :prj :name (:category/name projects) :href (:category/href projects) :first? true :last? false})
-      ;(category-header this {:type :thy :name (:category/name theory) :href (:category/href theory) :first? false :last? false})
-      ;(category-header this {:type :exs :name (:category/name exercises) :href (:category/href exercises) :first? false :last? true})
-      )))
+      (ui-category-header exercises))
+    (map #(ui-content %) (:category/content projects))
+    ))
 
 (def ui-categories (comp/factory Categories))
 

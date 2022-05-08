@@ -1,16 +1,17 @@
 {:paths ["src/main" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         com.fulcrologic/fulcro {:mvn/version "3.5.19"}
         com.wsscode/pathom {:mvn/version "2.4.0"}
         com.taoensso/timbre {:mvn/version "5.2.1"}
         ring/ring-core {:mvn/version "1.9.5"}
-        http-kit/http-kit {:mvn/version "2.5.3"}}
+        http-kit/http-kit {:mvn/version "2.5.3"}
+        compojure/compojure {:mvn/version "1.6.2"}}
 
  :aliases {:dev {:extra-paths ["src/dev"]
-                 :extra-deps {org.clojure/clojurescript {:mvn/version "1.10.914"}
-                              thheller/shadow-cljs {:mvn/version "2.16.9"}
-                              binaryage/devtools {:mvn/version "1.0.4"}
+                 :extra-deps {org.clojure/clojurescript {:mvn/version "1.11.4"}
+                              thheller/shadow-cljs {:mvn/version "2.18.0"}
+                              binaryage/devtools {:mvn/version "1.0.6"}
                               org.clojure/tools.namespace {:mvn/version "0.2.11"}
-                              cider/cider-nrepl {:mvn/version "0.27.4"}}}
+                              cider/cider-nrepl {:mvn/version "0.28.3"}}}
            :test {:main-opts ["-m" "kaocha.runner"]
-                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.63.998"}}}}}
+                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}}}
