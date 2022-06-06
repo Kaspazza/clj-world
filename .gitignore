@@ -5,6 +5,7 @@ pom.xml
 /classes/
 /out/
 /target/
+.clj-kondo/*
 .repl
 .nrepl-port
 node_modules/
