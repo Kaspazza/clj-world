@@ -10,7 +10,7 @@
 (defsc Content [this {:content/keys [id type title desc] :as props}]
   {:query [:content/id :content/type :content/title :content/desc]
    :ident (fn [] [:content/id (:content/id props)])}
-  (dom/li {:key (str id title) :className "relative"}
+  (dom/li {:className "relative"}
     (dom/div {:className "group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500 overflow-hidden"}
       (dom/img {:src "https://techcrunch.com/wp-content/uploads/2015/04/codecode.jpg?w=1390&crop=1" :alt "" :className "object-cover pointer-events-none group-hover:opacity-75"})
       (dom/button {:type "button" :className "absolute inset-0 focus:outline-none"}
@@ -18,7 +18,7 @@
     (dom/p {:className "mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"} title)
     (dom/p {:className "block text-sm font-medium text-gray-500 pointer-events-none"} desc)))
 
-(def ui-content (comp/factory Content))
+(def ui-content (comp/factory Content {:keyfn :content/id}))
 
 (defsc CategoryHeader
   [this {:category/keys [id name href content] :ui/keys [first? last? active?]}]
@@ -38,7 +38,7 @@
     (dom/span name)
     (dom/span {:aria-hidden "true" :classes [(if active? "bg-indigo-500" "bg-transparent") "absolute inset-x-0 bottom-0 h-0.5"]})))
 
-(def ui-category-header (comp/factory CategoryHeader {:keyfn :content/id}))
+(def ui-category-header (comp/factory CategoryHeader))
 
 (defsc Categories [this {:categories/keys [projects theory exercises] :as props}]
   {:query [{:categories/projects (comp/get-query CategoryHeader)}
@@ -53,9 +53,9 @@
       (ui-category-header projects)
       (ui-category-header theory)
       (ui-category-header exercises))
-    #_(dom/ul {:role "list" :className "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 mt-4 mx-4"}
-        (map #(ui-content %) (:category/content (first (filter (fn [item]
-                                                                 (:ui/active? item)) [projects theory exercises])))))))
+    (dom/ul {:role "list" :className "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 mt-4 mx-4"}
+      (map #(ui-content %) (:category/content (first (filter (fn [item]
+                                                               (:ui/active? item)) [projects theory exercises])))))))
 
 (def ui-categories (comp/factory Categories))
 
