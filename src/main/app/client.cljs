@@ -40,22 +40,22 @@
 
 (def ui-category-header (comp/factory CategoryHeader))
 
-(defsc Categories [this {:categories/keys [projects theory exercises] :as props}]
-  {:query [{:categories/projects (comp/get-query CategoryHeader)}
+(defsc Categories [this {:categories/keys [project theory exercise] :as props}]
+  {:query [{:categories/project (comp/get-query CategoryHeader)}
            {:categories/theory (comp/get-query CategoryHeader)}
-           {:categories/exercises (comp/get-query CategoryHeader)}]
-   :initial-state (fn [_] {:categories/projects {:category/id :projects :category/name "Projects" :category/href "/projects" :category/content [] :ui/first? true :ui/last? false :ui/active? true}
+           {:categories/exercise (comp/get-query CategoryHeader)}]
+   :initial-state (fn [_] {:categories/project {:category/id :project :category/name "Projects" :category/href "/projects" :category/content [] :ui/first? true :ui/last? false :ui/active? true}
                            :categories/theory {:category/id :theory :category/name "Theory" :category/href "/theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
-                           :categories/exercises {:category/id :exercises :category/name "Exercises" :category/href "/exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}})
+                           :categories/exercise {:category/id :exercise :category/name "Exercises" :category/href "/exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}})
    :ident (fn [] [:component/id ::Categories])}
   (dom/div
     (dom/nav {:classes ["relative z-0 rounded-lg shadow flex divide-x divide-gray-200"] :aria-label "Tabs"}
-      (ui-category-header projects)
+      (ui-category-header project)
       (ui-category-header theory)
-      (ui-category-header exercises))
+      (ui-category-header exercise))
     (dom/ul {:role "list" :className "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 mt-4 mx-4"}
       (map #(ui-content %) (:category/content (first (filter (fn [item]
-                                                               (:ui/active? item)) [projects theory exercises])))))))
+                                                               (:ui/active? item)) [project theory exercise])))))))
 
 (def ui-categories (comp/factory Categories))
 
@@ -69,7 +69,7 @@
   "Shadow-cljs sets this up to be our entry-point function. See shadow-cljs.edn `:init-fn` in the modules of the main build."
   []
   (app/mount! APP Root "app")
-  (df/load! APP [:category/id :projects] CategoryHeader {:focus [:category/content]})
+  (df/load! APP [:category/id :project] CategoryHeader {:focus [:category/content]})
   (js/console.log "Loaded"))
 
 (defn ^:export refresh

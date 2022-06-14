@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Deps: com.datomic/client-cloud:1.0.119">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/datomic/client-cloud/1.0.119/client-cloud-1.0.119.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

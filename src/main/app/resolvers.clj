@@ -1,6 +1,8 @@
 (ns app.resolvers
   (:require
     [com.wsscode.pathom.core :as p]
+    [clojure.core.async :as a]
+    [app.datomic :as datomic]
     [com.wsscode.pathom.connect :as pc]))
 
 (def content-table
@@ -21,9 +23,13 @@
 (pc/defresolver category-resolver [_ {id :category/id}]
   {::pc/input #{:category/id}
    ::pc/output [{:category/content [:content/id]}]}
-  (case id
-    :projects {:category/content [{:content/id 1} {:content/id 2} {:content/id 3} {:content/id 4}]}
+  (let [ids (datomic/content-by-type id)
+        ids2 (into [] (map (fn [content] (first content)) ids))
+        test (prn "ids: " ids2)]
+  {:category/content ids2}
+  #_(case id
+    :project {:category/content [{:content/id 1} {:content/id 2} {:content/id 3} {:content/id 4}]}
     :theory {:category/content [{:content/id 5} {:content/id 6}]}
-    :exercises {:category/content [{:content/id 7}]}))
+    :exercise {:category/content [{:content/id 7}]})))
 
 (def resolvers [content-resolver category-resolver])

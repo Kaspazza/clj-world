@@ -1,19 +1,22 @@
 {:paths ["src/main" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+        org.clojure/clojurescript {:mvn/version "1.11.4"}
         com.fulcrologic/fulcro {:mvn/version "3.5.20"}
         com.wsscode/pathom {:mvn/version "2.4.0"}
         com.taoensso/timbre {:mvn/version "5.2.1"}
         ring/ring-core {:mvn/version "1.9.5"}
         http-kit/http-kit {:mvn/version "2.5.3"}
         compojure/compojure {:mvn/version "1.6.2"}
-        clj-kondo/config {:git/url "https://github.com/clj-kondo/config"
-                          :sha "c37c13ea09b6aaf23db3a7a9a0574f422bb0b4c2"}}
+        com.google.guava/guava {:mvn/version "31.1-jre"}
+        com.datomic/client-cloud {:mvn/version "1.0.119"}}
 
  :aliases {:dev {:extra-paths ["src/dev"]
-                 :extra-deps {org.clojure/clojurescript {:mvn/version "1.11.4"}
+                 :extra-deps {
                               thheller/shadow-cljs {:mvn/version "2.18.0"}
                               binaryage/devtools {:mvn/version "1.0.6"}
                               org.clojure/tools.namespace {:mvn/version "0.2.11"}
+                              clj-kondo/config {:git/url "https://github.com/clj-kondo/config"
+                                                :sha "c37c13ea09b6aaf23db3a7a9a0574f422bb0b4c2"}
                               cider/cider-nrepl {:mvn/version "0.28.3"}}}
            :test {:main-opts ["-m" "kaocha.runner"]
                   :extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}}}

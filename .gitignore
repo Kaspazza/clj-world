@@ -5,7 +5,7 @@ pom.xml
 /classes/
 /out/
 /target/
-.clj-kondo/*
+.clj-kondo/.cache/
 .repl
 .nrepl-port
 node_modules/
@@ -14,3 +14,4 @@ yarn.lock
 .shadow-cljs/
 resources/public/dist/**
 resources/public/js/main/**
+.clj-kondo
