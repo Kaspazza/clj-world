@@ -6,7 +6,7 @@
         com.wsscode/pathom {:mvn/version "2.4.0"}
         ring/ring-core {:mvn/version "1.9.5"}
         http-kit/http-kit {:mvn/version "2.5.3"}
-        compojure/compojure {:mvn/version "1.6.2"}
+        ;compojure/compojure {:mvn/version "1.6.2"}
         com.google.guava/guava {:mvn/version "31.1-jre"}
         ;; Unified logging for server
         com.taoensso/timbre {:mvn/version "5.2.1"}

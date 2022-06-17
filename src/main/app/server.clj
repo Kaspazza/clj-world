@@ -1,5 +1,4 @@
 (ns app.server
-  (:use compojure.core)
   (:require
     [app.parser :refer [api-parser]]
     [org.httpkit.server :as http]
@@ -7,11 +6,7 @@
     [com.fulcrologic.fulcro.server.api-middleware :as server]
     [ring.middleware.content-type :refer [wrap-content-type]]
     [ring.middleware.not-modified :refer [wrap-not-modified]]
-    [compojure.core :refer :all]
-    [compojure.route :as route]
     [ring.middleware.resource :refer [wrap-resource]]
-    [taoensso.timbre :as timbre]
-    [ring.util.response :as response]
     [clojure.string :as str]
     [ring.util.response :as resp]))
 
@@ -26,12 +21,8 @@
          [:div#app]
          [:script {:src "/js/main/main.js"}]]))
 
-
-;(defroutes routing-handler
-;  (GET "/" [] (generate-index))
-;  (route/not-found "<h1>Page not found</h1>"))
 (def not-found-handler
-  (fn [req]
+  (fn [_req]
     {:status 404
      :body   {}}))
 
