@@ -11,7 +11,9 @@
     [compojure.route :as route]
     [ring.middleware.resource :refer [wrap-resource]]
     [taoensso.timbre :as timbre]
-    [ring.util.response :as response]))
+    [ring.util.response :as response]
+    [clojure.string :as str]
+    [ring.util.response :as resp]))
 
 (defn generate-index []
   (h.page/html5 {}
@@ -25,19 +27,34 @@
          [:script {:src "/js/main/main.js"}]]))
 
 
-(defroutes routing-handler
-  (GET "/" [] (generate-index))
-  (route/not-found "<h1>Page not found</h1>"))
+;(defroutes routing-handler
+;  (GET "/" [] (generate-index))
+;  (route/not-found "<h1>Page not found</h1>"))
+(def not-found-handler
+  (fn [req]
+    {:status 404
+     :body   {}}))
 
+(defn wrap-html-routes [ring-handler]
+  (fn [{:keys [uri] :as req}]
+    (if (or (str/starts-with? uri "/api")
+          (str/starts-with? uri "/images")
+          (str/starts-with? uri "/files")
+          (str/starts-with? uri "/js")
+          (str/starts-with? uri "/dist"))
+      (ring-handler req)
+
+      (-> (resp/response (generate-index))
+        (resp/content-type "text/html")))))
 
 (def middleware
-  (-> routing-handler
+  (-> not-found-handler
     (server/wrap-api {:uri "/api"
                       :parser api-parser})
-    server/wrap-transit-params
-    server/wrap-transit-response
-
+    (server/wrap-transit-params {})
+    (server/wrap-transit-response {})
     (wrap-resource "public")
+    (wrap-html-routes)
     wrap-content-type
     wrap-not-modified))
 

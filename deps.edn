@@ -2,13 +2,19 @@
  :deps {org.clojure/clojure {:mvn/version "1.10.3"}
         org.clojure/clojurescript {:mvn/version "1.11.4"}
         com.fulcrologic/fulcro {:mvn/version "3.5.20"}
+        com.fulcrologic/fulcro-rad {:mvn/version "1.2.2"}
         com.wsscode/pathom {:mvn/version "2.4.0"}
-        com.taoensso/timbre {:mvn/version "5.2.1"}
         ring/ring-core {:mvn/version "1.9.5"}
         http-kit/http-kit {:mvn/version "2.5.3"}
         compojure/compojure {:mvn/version "1.6.2"}
         com.google.guava/guava {:mvn/version "31.1-jre"}
-        com.datomic/client-cloud {:mvn/version "1.0.119"}}
+        ;; Unified logging for server
+        com.taoensso/timbre {:mvn/version "5.2.1"}
+        org.slf4j/log4j-over-slf4j {:mvn/version "1.7.36"}  ; auto sends log4j to slf4j
+        org.slf4j/jul-to-slf4j {:mvn/version "1.7.36"}      ; auto sends java.util.logging to slf4j
+        org.slf4j/jcl-over-slf4j {:mvn/version "1.7.36"}    ; auto-sends java.common.logging to slf4j
+        com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}   ; hooks slf4j to timbre
+        com.datomic/client-cloud {:mvn/version "1.0.120"}}
 
  :aliases {:dev {:extra-paths ["src/dev"]
                  :extra-deps {

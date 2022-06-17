@@ -5,6 +5,10 @@
     [com.fulcrologic.fulcro.dom :as dom]
     [app.mutations :as m]
     [com.fulcrologic.fulcro.application :as app]
+    [com.fulcrologic.rad.routing.html5-history :as hist5 :refer [html5-history]]
+    [com.fulcrologic.rad.routing :as routing]
+    [com.fulcrologic.rad.routing.history :as history]
+    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr :refer [defrouter]]
     [com.fulcrologic.fulcro.data-fetch :as df]))
 
 (defsc Content [this {:content/keys [id type title desc] :as props}]
@@ -12,24 +16,35 @@
    :ident (fn [] [:content/id (:content/id props)])}
   (dom/li {:className "relative"}
     (dom/div {:className "group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500 overflow-hidden"}
-      (dom/img {:src "https://techcrunch.com/wp-content/uploads/2015/04/codecode.jpg?w=1390&crop=1" :alt "" :className "object-cover pointer-events-none group-hover:opacity-75"})
-      (dom/button {:type "button" :className "absolute inset-0 focus:outline-none"}
+      (dom/img {:src "https://techcrunch.com/wp-content/uploads/2015/04/codecode.jpg?w=1390&crop=1"
+                :alt "Lesson picture"
+                :className "object-cover pointer-events-none group-hover:opacity-75"})
+      (dom/button {:type "button"
+                   :className "absolute inset-0 focus:outline-none"
+                   :onClick (fn [e] )}
         (dom/span {:className "sr-only"} "View details for " title)))
     (dom/p {:className "mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"} title)
     (dom/p {:className "block text-sm font-medium text-gray-500 pointer-events-none"} desc)))
 
 (def ui-content (comp/factory Content {:keyfn :content/id}))
 
+;(defsc CategoryContent [this {:category/keys [content]}]
+;  {:query [{:category/content (comp/get-query Content)}]
+;   :ident (fn [] [:component/id ::CategoryContent])}
+;  (dom/ul {:role "list" :className "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 mt-4 mx-4"}
+;    (map #(ui-content %) content)))
+;
+;(def ui-category-content (comp/factory CategoryContent))
+
+
 (defsc CategoryHeader
-  [this {:category/keys [id name href content] :ui/keys [first? last? active?]}]
-  {:query [:category/id :category/name :category/href :category/first? :category/last? {:category/content (comp/get-query Content)}
-           :ui/first? :ui/last? :ui/active?]
+  [this {:category/keys [id name content] :ui/keys [first? last? active?]}]
+  {:query [:category/id :category/name {:category/content (comp/get-query Content)} :ui/first? :ui/last? :ui/active?]
    :ident :category/id}
   (dom/button {:key name
                :onClick (fn [_e]
                           (df/load! this [:category/id id] CategoryHeader {:focus [:category/content]})
                           (comp/transact! this `[(m/set-active-category {:chosen-id ~id})]))
-               ; :href href
                :classes [(if active? "text-gray-900" "text-gray-500 hover:text-gray-700")
                          (when first? "rounded-l-lg")
                          (when last? "rounded-r-lg")
@@ -44,9 +59,11 @@
   {:query [{:categories/project (comp/get-query CategoryHeader)}
            {:categories/theory (comp/get-query CategoryHeader)}
            {:categories/exercise (comp/get-query CategoryHeader)}]
-   :initial-state (fn [_] {:categories/project {:category/id :project :category/name "Projects" :category/href "/projects" :category/content [] :ui/first? true :ui/last? false :ui/active? true}
-                           :categories/theory {:category/id :theory :category/name "Theory" :category/href "/theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
-                           :categories/exercise {:category/id :exercise :category/name "Exercises" :category/href "/exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}})
+   :route-segment ["categories"]
+   ;:will-enter (fn [app route-params] (dr/route-immediate [:component/id ::Categories]))
+   :initial-state (fn [_] {:categories/project {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? true}
+                           :categories/theory {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
+                           :categories/exercise {:category/id :exercise :category/name "Exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}})
    :ident (fn [] [:component/id ::Categories])}
   (dom/div
     (dom/nav {:classes ["relative z-0 rounded-lg shadow flex divide-x divide-gray-200"] :aria-label "Tabs"}
@@ -59,17 +76,35 @@
 
 (def ui-categories (comp/factory Categories))
 
+(defrouter RootRouter [this {:keys [current-state] :as props}]
+  {:router-targets     [Categories]}
+  (case current-state
+    :pending (dom/div "Loading...")
+    :failed (dom/div "Failed!")
+    ;; default will be used when the current state isn't yet set
+    (dom/div "No route selected.")))
 
-(defsc Root [this {:keys [categories]}]
-  {:query [{:categories (comp/get-query Categories)}]
-   :initial-state (fn [p] {:categories (comp/get-initial-state Categories {:id ::Categories})})}
-  (ui-categories categories))
+(def ui-root-router (comp/factory RootRouter))
+
+(defsc Root [this {:root/keys [router categories]}]
+  {:query [{:root/router (comp/get-query RootRouter)}
+           {:root/categories (comp/get-query Categories)}]
+   :initial-state (fn [p] {:root/router {}
+                           :root/categories (comp/get-initial-state Categories)})}
+  (dom/div
+  (ui-root-router router)))
+
 
 (defn ^:export init
   "Shadow-cljs sets this up to be our entry-point function. See shadow-cljs.edn `:init-fn` in the modules of the main build."
   []
-  (app/mount! APP Root "app")
+  (app/set-root! APP Root {:initialize-state? true})
+  (dr/initialize! APP)
   (df/load! APP [:category/id :project] CategoryHeader {:focus [:category/content]})
+  (history/install-route-history! APP (html5-history))
+  (hist5/restore-route! APP Categories {})
+  (routing/route-to! APP Categories {})
+  (app/mount! APP Root "app" {:initialize-state? false})
   (js/console.log "Loaded"))
 
 (defn ^:export refresh
