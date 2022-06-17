@@ -21,36 +21,31 @@
                 :className "object-cover pointer-events-none group-hover:opacity-75"})
       (dom/button {:type "button"
                    :className "absolute inset-0 focus:outline-none"
-                   :onClick (fn [e] )}
+                   :onClick (fn [_e] )}
         (dom/span {:className "sr-only"} "View details for " title)))
     (dom/p {:className "mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"} title)
     (dom/p {:className "block text-sm font-medium text-gray-500 pointer-events-none"} desc)))
 
 (def ui-content (comp/factory Content {:keyfn :content/id}))
 
-;(defsc CategoryContent [this {:category/keys [content]}]
-;  {:query [{:category/content (comp/get-query Content)}]
-;   :ident (fn [] [:component/id ::CategoryContent])}
-;  (dom/ul {:role "list" :className "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 mt-4 mx-4"}
-;    (map #(ui-content %) content)))
-;
-;(def ui-category-content (comp/factory CategoryContent))
 
+(declare Categories)
 
 (defsc CategoryHeader
-  [this {:category/keys [id name content] :ui/keys [first? last? active?]}]
+  [this {:category/keys [id content] category-name :category/name :ui/keys [first? last? active?]}]
   {:query [:category/id :category/name {:category/content (comp/get-query Content)} :ui/first? :ui/last? :ui/active?]
    :ident :category/id}
-  (dom/button {:key name
+  (dom/button {:key category-name
                :onClick (fn [_e]
                           (df/load! this [:category/id id] CategoryHeader {:focus [:category/content]})
-                          (comp/transact! this `[(m/set-active-category {:chosen-id ~id})]))
+                          (comp/transact! this `[(m/set-active-category {:chosen-id ~id})])
+                          (routing/route-to! APP Categories {:category/id (name id)}))
                :classes [(if active? "text-gray-900" "text-gray-500 hover:text-gray-700")
                          (when first? "rounded-l-lg")
                          (when last? "rounded-r-lg")
                          "group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10"]
                :aria-label (if active? "page" nil)}
-    (dom/span name)
+    (dom/span category-name)
     (dom/span {:aria-hidden "true" :classes [(if active? "bg-indigo-500" "bg-transparent") "absolute inset-x-0 bottom-0 h-0.5"]})))
 
 (def ui-category-header (comp/factory CategoryHeader))
@@ -59,8 +54,7 @@
   {:query [{:categories/project (comp/get-query CategoryHeader)}
            {:categories/theory (comp/get-query CategoryHeader)}
            {:categories/exercise (comp/get-query CategoryHeader)}]
-   :route-segment ["categories"]
-   ;:will-enter (fn [app route-params] (dr/route-immediate [:component/id ::Categories]))
+   :route-segment ["categories" :category/id]
    :initial-state (fn [_] {:categories/project {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? true}
                            :categories/theory {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
                            :categories/exercise {:category/id :exercise :category/name "Exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}})
@@ -74,14 +68,11 @@
       (map #(ui-content %) (:category/content (first (filter (fn [item]
                                                                (:ui/active? item)) [project theory exercise])))))))
 
-(def ui-categories (comp/factory Categories))
-
 (defrouter RootRouter [this {:keys [current-state] :as props}]
   {:router-targets     [Categories]}
   (case current-state
     :pending (dom/div "Loading...")
     :failed (dom/div "Failed!")
-    ;; default will be used when the current state isn't yet set
     (dom/div "No route selected.")))
 
 (def ui-root-router (comp/factory RootRouter))
@@ -103,7 +94,7 @@
   (df/load! APP [:category/id :project] CategoryHeader {:focus [:category/content]})
   (history/install-route-history! APP (html5-history))
   (hist5/restore-route! APP Categories {})
-  (routing/route-to! APP Categories {})
+  (routing/route-to! APP Categories {:category/id "project"})
   (app/mount! APP Root "app" {:initialize-state? false})
   (js/console.log "Loaded"))
 
