@@ -7,11 +7,12 @@
 (defmutation change-category [{:keys [chosen-id]}]
   (action [{:keys [app state]}]
     (df/load! app [:category/id chosen-id] CategoryHeader {:focus [:category/content]})
+
     (doall (map
              (fn [category-id]
                (if (= chosen-id category-id)
                  (swap! state assoc-in [:category/id category-id :ui/active?] true)
                  (swap! state assoc-in [:category/id category-id :ui/active?] false)))
-             (into [] (keys (:category/id @state))))))
-  (ok-action [{:keys [app]}]
+             (into [] (keys (:category/id @state)))))
+
     (routing/route-to! app Categories {:category/id (name chosen-id)})))
