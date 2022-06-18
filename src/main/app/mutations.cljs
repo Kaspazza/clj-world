@@ -10,7 +10,6 @@
 
 (defmutation load-category-lessons [{:keys [chosen-id]}]
   (action [{:keys [app _state]}]
-    (prn "triggering load!")
     (df/load! app [:category/id chosen-id] CategoryHeader {:focus [:category/content]})))
 
 
