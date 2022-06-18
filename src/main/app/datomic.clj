@@ -1,5 +1,6 @@
 (ns app.datomic
-  (:require [datomic.client.api :as d]))
+  (:require [datomic.client.api :as d]
+            [datomic.dev-local :as dl]))
 
 ;; Explicitly requesting local client TODO change to datomic cloud
 (def config {:server-type :ion
@@ -8,11 +9,14 @@
              :endpoint "https://xrjzcnnv55.execute-api.eu-west-2.amazonaws.com"
              })
 
-(def client (d/client config))
+(defn client [] (d/client config))
 
-(def conn (d/connect client {:db-name "clj-world"}))
+(defn conn [] (d/connect (client) {:db-name "clj-world"}))
 
-(def db (d/db conn))
+(def db (d/db (conn)))
+
+(defn run-dev []
+  (dl/divert-system {:system "clj-world"}))
 
 (def content-schema
   [{:db/ident :content/id
@@ -45,16 +49,17 @@
 (defn content-by-type [type]
   (d/q '[:find (pull ?e [:content/title :content/desc :content/type :content/id :content/img])
          :in $ ?type
-         :where [?e :content/type ?type]] (d/db conn) type))
+         :where [?e :content/type ?type]] (d/db (conn)) type))
 
 (comment
-  (:import (java.util UUID))
+  (import (java.util UUID))
+
   (defn uuid [] (UUID/randomUUID))
 
   (def fake-data
     [{:content/id (uuid)
       :content/type :project
-      :content/title "Rock paper scissor"
+      :content/title "Rock paper & scissor"
       :content/desc "First content text"}
 
      {:content/id (uuid)
@@ -90,6 +95,9 @@
 
   ;; add some data
   (d/transact conn {:tx-data fake-data})
+
+  (d/transact conn {:tx-data [{:content/id (uuid)
+                               :content/title "Rock paper & scissor"}]})
 
   ;; connection
   (d/db conn)

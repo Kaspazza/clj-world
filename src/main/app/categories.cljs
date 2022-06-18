@@ -72,4 +72,5 @@
       (map #(ui-content %)
         (:category/content (first
                              (filter (fn [item]
-                                       (:ui/active? item)) [project theory exercise])))))))
+                                       (:ui/active? item))
+                               [project theory exercise])))))))

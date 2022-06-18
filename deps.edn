@@ -7,6 +7,7 @@
         ring/ring-core {:mvn/version "1.9.5"}
         http-kit/http-kit {:mvn/version "2.5.3"}
         com.google.guava/guava {:mvn/version "31.1-jre"}
+        com.datomic/dev-local {:mvn/version "1.0.243"}
         ;; Unified logging for server
         com.taoensso/timbre {:mvn/version "5.2.1"}
         org.slf4j/log4j-over-slf4j {:mvn/version "1.7.36"}  ; auto sends log4j to slf4j

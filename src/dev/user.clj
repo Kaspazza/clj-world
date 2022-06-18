@@ -1,6 +1,7 @@
 (ns user
   (:require
     [app.server :as server]
+    [app.datomic :as datomic]
     [clojure.tools.namespace.repl :as tools-ns :refer [set-refresh-dirs refresh]]))
 
 ;; Ensure we only refresh the source we care about. This is important
@@ -9,6 +10,7 @@
 (set-refresh-dirs "src/dev" "src/main")
 
 (defn start []
+  (datomic/run-dev)
   (server/start))
 
 (defn restart
