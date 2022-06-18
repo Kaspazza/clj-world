@@ -4,15 +4,15 @@
     [app.mutations]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom :as dom]
-    [app.categories :refer [Categories]]
+    [app.ui.categories :refer [Categories]]
+    [app.ui.lesson :as lesson :refer [Lesson]]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.rad.routing.history :as history]
     [com.fulcrologic.rad.routing.html5-history :as hist5 :refer [html5-history]]
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr :refer [defrouter]]))
 
-
 (defrouter RootRouter [this {:keys [current-state]}]
-  {:router-targets [Categories]}
+  {:router-targets [Categories Lesson]}
   (case current-state
     :pending (dom/div "Loading...")
     :failed (dom/div "Failed!")
@@ -20,9 +20,10 @@
 
 (def ui-root-router (comp/factory RootRouter))
 
-(defsc Root [_this {:root/keys [router categories]}]
+(defsc Root [_this {:root/keys [router categories lesson]}]
   {:query [{:root/router (comp/get-query RootRouter)}
-           {:root/categories (comp/get-query Categories)}]
+           {:root/categories (comp/get-query Categories)}
+           {:root/lesson (comp/get-query Lesson)}]
    :initial-state (fn [p] {:root/router {}
                            :root/categories (comp/get-initial-state Categories)})}
   (dom/div

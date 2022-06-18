@@ -1,7 +1,7 @@
 (ns app.mutations
   (:require [com.fulcrologic.fulcro.mutations :refer [defmutation]]
             [com.fulcrologic.fulcro.data-fetch :as df]
-            [app.categories :refer [CategoryHeader Categories]]
+            [app.ui.categories :refer [CategoryHeader Categories]]
             [com.fulcrologic.rad.routing :as routing]))
 
 (defmutation change-category [{:keys [chosen-id]}]

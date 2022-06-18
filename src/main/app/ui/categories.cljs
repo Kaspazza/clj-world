@@ -1,8 +1,10 @@
-(ns app.categories
+(ns app.ui.categories
   (:require [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
             [com.fulcrologic.fulcro.dom :as dom]
+            [app.ui.lesson :as lesson :refer [Lesson]]
             [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
-            [app.application :refer [APP]]))
+            [app.application :refer [APP]]
+            [com.fulcrologic.rad.routing :as routing]))
 
 (defsc Content [this {:content/keys [id type title desc] :as props}]
   {:query [:content/id :content/type :content/title :content/desc]
@@ -16,7 +18,8 @@
                 :className "object-cover pointer-events-none group-hover:opacity-75"})
       (dom/button {:type "button"
                    :className "absolute inset-0 focus:outline-none"
-                   :onClick (fn [_e])}
+                   :onClick (fn [_e] (routing/route-to! APP Lesson {:category-id (name type)
+                                                                    :lesson-id id}))}
         (dom/span {:className "sr-only"} "View details for " title)))
     (dom/p {:className "mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"} title)
     (dom/p {:className "block text-sm font-medium text-gray-500 pointer-events-none"} desc)))
