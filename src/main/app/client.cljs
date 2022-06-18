@@ -4,16 +4,14 @@
     [app.mutations]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom :as dom]
-    [app.categories :refer [Categories CategoryHeader]]
+    [app.categories :refer [Categories]]
     [com.fulcrologic.fulcro.application :as app]
-    [com.fulcrologic.rad.routing.html5-history :as hist5 :refer [html5-history]]
-    [com.fulcrologic.rad.routing :as routing]
     [com.fulcrologic.rad.routing.history :as history]
-    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr :refer [defrouter]]
-    [com.fulcrologic.fulcro.data-fetch :as df]))
+    [com.fulcrologic.rad.routing.html5-history :as hist5 :refer [html5-history]]
+    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr :refer [defrouter]]))
 
 
-(defrouter RootRouter [this {:keys [current-state] :as props}]
+(defrouter RootRouter [this {:keys [current-state]}]
   {:router-targets [Categories]}
   (case current-state
     :pending (dom/div "Loading...")
@@ -22,7 +20,7 @@
 
 (def ui-root-router (comp/factory RootRouter))
 
-(defsc Root [this {:root/keys [router categories]}]
+(defsc Root [_this {:root/keys [router categories]}]
   {:query [{:root/router (comp/get-query RootRouter)}
            {:root/categories (comp/get-query Categories)}]
    :initial-state (fn [p] {:root/router {}
@@ -30,16 +28,14 @@
   (dom/div
     (ui-root-router router)))
 
-
 (defn ^:export init
   "Shadow-cljs sets this up to be our entry-point function. See shadow-cljs.edn `:init-fn` in the modules of the main build."
   []
   (app/set-root! APP Root {:initialize-state? true})
   (dr/initialize! APP)
-  (df/load! APP [:category/id :project] CategoryHeader {:focus [:category/content]})
+  (dr/initialize! APP)
   (history/install-route-history! APP (html5-history))
-  (hist5/restore-route! APP Categories {})
-  (routing/route-to! APP Categories {:category/id "project"})
+  (hist5/restore-route! APP Categories {:category-id "project"})
   (app/mount! APP Root "app" {:initialize-state? false})
   (js/console.log "Loaded"))
 

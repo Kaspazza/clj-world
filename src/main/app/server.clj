@@ -6,6 +6,7 @@
     [com.fulcrologic.fulcro.server.api-middleware :as server]
     [ring.middleware.content-type :refer [wrap-content-type]]
     [ring.middleware.not-modified :refer [wrap-not-modified]]
+    [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.resource :refer [wrap-resource]]
     [clojure.string :as str]
     [ring.util.response :as resp]))
@@ -44,10 +45,11 @@
                       :parser api-parser})
     (server/wrap-transit-params {})
     (server/wrap-transit-response {})
+    (wrap-session)
     (wrap-resource "public")
-    (wrap-html-routes)
     wrap-content-type
-    wrap-not-modified))
+    wrap-not-modified
+    (wrap-html-routes)))
 
 (defonce stop-fn (atom nil))
 
