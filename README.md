@@ -6,3 +6,6 @@ In server.clj run (start) in repl
 
 App runs on 3000 port
 Shadow-cljs build on: http://localhost:9630/build/main
+
+Optimizing tailwind for production:
+npx tailwindcss -o build.css --minify
