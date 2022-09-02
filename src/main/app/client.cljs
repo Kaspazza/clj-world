@@ -29,8 +29,7 @@
            ;{:root/lesson (comp/get-query Lesson)}
            ]
    :initial-state (fn [_] {:root/router {}
-                           :root/categories (comp/get-initial-state Categories)
-                           })}
+                           :root/categories (comp/get-initial-state Categories)})}
   (dom/div
     (ui-root-router router)))
 
