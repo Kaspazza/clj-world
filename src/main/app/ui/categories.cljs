@@ -48,7 +48,7 @@
                      :category/content content
                      :ui/first? first?
                      :ui/last? last?
-                     :ui/active active?})
+                     :ui/active? active?})
    :ident :category/id}
   (dom/button {:key category-name
                :onClick (fn [_e]
@@ -71,9 +71,9 @@
    :will-enter (fn [_app {:keys [category-id]}]
                  (comp/transact! APP `[(app.mutations/change-active-tab {:chosen-id ~category-id})])
                  (dr/route-immediate [:component/id ::Categories]))
-   :initial-state (fn [_] {:categories/project {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? false}
-                           :categories/theory {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
-                           :categories/exercise (comp/get-initial-state CategoryHeader {:category/id :exercise :category/name "Exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false})})
+   :initial-state {:categories/project {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? false}
+                   :categories/theory {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
+                   :categories/exercise {:category/id :exercise :category/name "Exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}}
    :ident (fn [] [:component/id ::Categories])}
   (dom/div
     (dom/nav {:classes ["relative z-0 rounded-lg shadow flex divide-x divide-gray-200"] :aria-label "Tabs"}

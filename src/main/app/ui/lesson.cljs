@@ -144,12 +144,11 @@
                      :as props}]
   {:query [:content/id :ui/active? :ui/repl-state]
    :route-segment ["categories" :category-id :content-id]
-   :will-enter (fn [_app {:keys [content-id]}]
-                 (dr/route-immediate [:content/id content-id]))
+   :will-enter (fn [_app {:keys [content-id] :as props}]
+                 (dr/route-immediate [:content/id (uuid content-id)]))
    :initial-state {}
    :ident :content/id}
   (dom/div {:className "h-full flex mt-5"}
-    (prn "props: " props)
     (dom/div {:className "flex-1 flex items-stretch overflow-hidden"}
       (dom/main {:className "flex-1 overflow-y-auto"}
         (dom/div

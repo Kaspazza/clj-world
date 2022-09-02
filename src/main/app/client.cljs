@@ -21,13 +21,8 @@
 
 (def ui-root-router (comp/factory RootRouter))
 
-(defsc Root [_this {:root/keys [router
-                                ;categories lesson
-                                ]}]
-  {:query [{:root/router (comp/get-query RootRouter)}
-           ;{:root/categories (comp/get-query Categories)}
-           ;{:root/lesson (comp/get-query Lesson)}
-           ]
+(defsc Root [_this {:root/keys [router]}]
+  {:query [{:root/router (comp/get-query RootRouter)}]
    :initial-state {:root/router {}}}
   (dom/div
     (ui-root-router router)))
