@@ -5,5 +5,6 @@
     [com.fulcrologic.fulcro.components :as comp]))
 
 (defonce APP (app/fulcro-app
-               {:remotes {:remote (http/fulcro-http-remote {})}}))
+               {:remotes {:remote (http/fulcro-http-remote {})}
+                :render-middleware (when goog.DEBUG js/holyjak.fulcro_troubleshooting.troubleshooting_render_middleware)}))
 

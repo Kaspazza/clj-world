@@ -8,5 +8,6 @@
                                        :entries [app.client]}}
                    :devtools   {:after-load app.client/refresh
                                 :preloads   [com.fulcrologic.fulcro.inspect.preload
-                                             com.fulcrologic.fulcro.inspect.dom-picker-preload]}}}}
+                                             com.fulcrologic.fulcro.inspect.dom-picker-preload
+                                             holyjak.fulcro-troubleshooting]}}}}
 
