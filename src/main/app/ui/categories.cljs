@@ -7,7 +7,7 @@
 (defsc Content [this {:content/keys [id type title desc] :as props}]
   {:query [:content/id :content/type :content/title :content/desc]
    :initial-state {}
-   :ident (fn [] [:content/id (:content/id props)])}
+   :ident :content/id}
   (dom/li {:className "relative"}
     (dom/div {:className "group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100
                           focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100
@@ -71,8 +71,8 @@
    :will-enter (fn [_app {:keys [category-id]}]
                  (comp/transact! APP `[(app.mutations/change-active-tab {:chosen-id ~category-id})])
                  (dr/route-immediate [:component/id ::Categories]))
-   :initial-state (fn [_] {:categories/project (comp/get-initial-state CategoryHeader {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? false})
-                           :categories/theory (comp/get-initial-state CategoryHeader {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false})
+   :initial-state (fn [_] {:categories/project {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? false}
+                           :categories/theory {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
                            :categories/exercise (comp/get-initial-state CategoryHeader {:category/id :exercise :category/name "Exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false})})
    :ident (fn [] [:component/id ::Categories])}
   (dom/div

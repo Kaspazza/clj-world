@@ -6,7 +6,7 @@
             [com.fulcrologic.rad.routing :as routing]))
 
 (defmutation change-category [{:keys [chosen-id]}]
-  (action [{:keys [app _state]}]
+  (action [{:keys [app state]}]
     (routing/route-to! app Categories {:category-id (name chosen-id)})))
 
 (defmutation load-category-lessons [{:keys [chosen-id]}]
@@ -30,4 +30,4 @@
 
 (defmutation update-repl-state [{:keys [repl-value]}]
   (action [{:keys [app state]}]
-    (swap! state assoc-in [:component/id :app.ui.lesson/Lesson :ui/repl-state] (into [] repl-value))))
+    (swap! state assoc-in [:content/id :ui/repl-state] (into [] repl-value))))

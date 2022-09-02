@@ -146,9 +146,10 @@
    :route-segment ["categories" :category-id :content-id]
    :will-enter (fn [_app {:keys [content-id]}]
                  (dr/route-immediate [:content/id content-id]))
-   :initial-state {:ui/active? true :ui/repl-state []}
-   :ident (fn [] [:content/id (:content/id props)])}
+   :initial-state {}
+   :ident :content/id}
   (dom/div {:className "h-full flex mt-5"}
+    (prn "props: " props)
     (dom/div {:className "flex-1 flex items-stretch overflow-hidden"}
       (dom/main {:className "flex-1 overflow-y-auto"}
         (dom/div

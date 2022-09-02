@@ -25,11 +25,10 @@
                                 ;categories lesson
                                 ]}]
   {:query [{:root/router (comp/get-query RootRouter)}
-           {:root/categories (comp/get-query Categories)}
+           ;{:root/categories (comp/get-query Categories)}
            ;{:root/lesson (comp/get-query Lesson)}
            ]
-   :initial-state (fn [_] {:root/router {}
-                           :root/categories (comp/get-initial-state Categories)})}
+   :initial-state {:root/router {}}}
   (dom/div
     (ui-root-router router)))
 
@@ -54,5 +53,7 @@
 
 (comment
   (-> APP (::app/state-atom) deref)
+
+  (comp/get-initial-state Root)
 
   )
