@@ -17,7 +17,7 @@
          [:meta {:charset "UTF-8"}]
          [:link {:href "/dist/output.css" :rel "stylesheet"}]
          [:link {:href "styles.css" :rel "stylesheet"}]
-         [:link {:href "favicon.ico" :rel "stortcut icon"}]]
+         [:link {:href "favicon.ico" :rel "shortcut icon"}]]
         [:body
          [:div#app]
          [:script {:src "/js/main/main.js"}]]))

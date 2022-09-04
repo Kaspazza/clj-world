@@ -31,6 +31,7 @@
                    (swap! state assoc-in [:category/id category-id :ui/active?] false)))
                (into [] (keys (:category/id @state))))))))
 
-(defmutation update-repl-state [{:keys [content-id repl-value]}]
+(defmutation update-repl-state [{:keys [content-id repl-value evaluated-line]}]
   (action [{:keys [app state]}]
-    (swap! state assoc-in [:content/id content-id :ui/repl-state] (into [] repl-value))))
+    (swap! state update-in [:content/id content-id :ui/repl-state] (fn [v]
+                                                                     (into [] (conj v {:line (str evaluated-line) :value (str repl-value)}))))))

@@ -16,7 +16,7 @@
 (j/defn eval-at-cursor [on-result ^:js {:keys [state]}]
   (some->> (eval-region/cursor-node-string state)
     (eval-string)
-    (on-result))
+    (on-result (eval-region/cursor-node-string state)))
   true)
 
 (j/defn eval-top-level [on-result ^:js {:keys [state]}]

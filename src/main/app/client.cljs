@@ -13,7 +13,9 @@
     [com.fulcrologic.rad.routing :as routing]))
 
 (defrouter RootRouter [this {:keys [current-state]}]
-  {:router-targets [Categories Lesson]}
+  {:router-targets [Categories
+                    Lesson
+                    ]}
   (case current-state
     :pending (dom/div "Loading...")
     :failed (dom/div "Failed!")
