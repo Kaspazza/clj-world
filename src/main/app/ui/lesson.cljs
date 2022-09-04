@@ -20,7 +20,8 @@
     [nextjournal.clojure-mode.test-utils :as test-utils]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom :as dom]
-    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]))
+    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
+    [com.fulcrologic.fulcro.data-fetch :as df]))
 
 (def theme
   (.theme EditorView
@@ -140,13 +141,19 @@
           tabs)))))
 
 (defsc Lesson [this {:ui/keys [repl-state]
-                     :content/keys [id]
+                     :content/keys [id desc title type]
                      :as props}]
-  {:query [:content/id :ui/repl-state]
+  {:query [:content/id :content/desc :content/title :content/type :ui/repl-state]
    :route-segment ["categories" :category-id :content-id]
    :will-enter (fn [_app {:keys [content-id] :as props}]
+                 (df/load! APP [:content/id (uuid content-id)] Lesson #_{:focus [:content/id]})
                  (dr/route-immediate [:content/id (uuid content-id)]))
-   :initial-state {}
+   :initial-state {:ui/repl-state []}
+   :pre-merge (fn [env]
+                (merge
+                  (comp/get-initial-state Lesson)
+                  (:current-normalized env)
+                  (:data-tree env)))
    :ident :content/id}
   (dom/div {:className "h-full flex mt-5"}
     (dom/div {:className "flex-1 flex items-stretch overflow-hidden"}

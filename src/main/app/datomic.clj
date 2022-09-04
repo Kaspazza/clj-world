@@ -51,6 +51,11 @@
          :in $ ?type
          :where [?e :content/type ?type]] (d/db (conn)) type))
 
+(defn content-by-id [id]
+  (d/q '[:find (pull ?e [:content/title :content/desc :content/type :content/id :content/img])
+         :in $ ?id
+         :where [?e :content/id ?id]] (d/db (conn)) id))
+
 (comment
   (import (java.util UUID))
 

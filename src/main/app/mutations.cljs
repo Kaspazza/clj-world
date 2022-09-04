@@ -15,6 +15,9 @@
 
 (defmutation open-lesson [{:keys [category-id content-id]}]
   (action [{:keys [app _state]}]
+    (prn "params: " {:category-id category-id
+                     :content-id content-id})
+    (df/load! app [:content/id content-id] Lesson {:focus [:content/id]})
     (routing/route-to! app Lesson {:category-id category-id
                                    :content-id content-id})))
 
