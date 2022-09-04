@@ -90,7 +90,7 @@
 ;    #_(finally
 ;        (j/call @!view :destroy))))
 
-(defn simple-editor []
+(defn simple-editor [id]
   (dom/form {:spellCheck "false"
              :data-gramm "false"}
     (dom/div
@@ -103,9 +103,9 @@
                       (cond-> #js [extensions]
                         true (.concat #js [(sci/extension {:modifier "Alt"
                                                            :on-result (fn [result]
-                                                                        (prn "result: " result)
                                                                         (comp/transact! APP
-                                                                          `[(app.mutations/update-repl-state {:repl-value ~result})]))})])) sample)
+                                                                          `[(app.mutations/update-repl-state {:repl-value ~result
+                                                                                                              :content-id ~id})]))})])) sample)
                     :parent el))))
        :style {:height 950}})))
 
@@ -139,10 +139,10 @@
                  (:name tab)))
           tabs)))))
 
-(defsc Lesson [this {:ui/keys [active? repl-state]
+(defsc Lesson [this {:ui/keys [repl-state]
                      :content/keys [id]
                      :as props}]
-  {:query [:content/id :ui/active? :ui/repl-state]
+  {:query [:content/id :ui/repl-state]
    :route-segment ["categories" :category-id :content-id]
    :will-enter (fn [_app {:keys [content-id] :as props}]
                  (dr/route-immediate [:content/id (uuid content-id)]))
@@ -157,7 +157,7 @@
             (dom/div {:className "px-4 py-5 sm:px-6"}
               (editor-tabs))
             (dom/div {:className "px-4 py-5 sm:p-6 min-h-full"}
-              (simple-editor)))))
+              (simple-editor id)))))
 
       (dom/aside {:className "hidden w-96 bg-white border-l border-gray-200 overflow-y-auto lg:block"}
         (if (seq repl-state) repl-state "Hi, I'm your REPL, feel free to use me!")))))

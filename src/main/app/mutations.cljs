@@ -28,6 +28,6 @@
                    (swap! state assoc-in [:category/id category-id :ui/active?] false)))
                (into [] (keys (:category/id @state))))))))
 
-(defmutation update-repl-state [{:keys [repl-value]}]
+(defmutation update-repl-state [{:keys [content-id repl-value]}]
   (action [{:keys [app state]}]
-    (swap! state assoc-in [:content/id :ui/repl-state] (into [] repl-value))))
+    (swap! state assoc-in [:content/id content-id :ui/repl-state] (into [] repl-value))))
