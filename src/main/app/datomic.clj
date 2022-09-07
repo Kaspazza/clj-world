@@ -9,11 +9,14 @@
              :endpoint "https://xrjzcnnv55.execute-api.eu-west-2.amazonaws.com"
              })
 
-(defn client [] (d/client config))
+(def dev-config {:server-type :dev-local
+                 :system "dev"})
+
+(defn client [] (d/client dev-config))
 
 (defn conn [] (d/connect (client) {:db-name "clj-world"}))
 
-(def db (d/db (conn)))
+;(def db (d/db (conn)))
 
 (defn run-dev []
   (dl/divert-system {:system "clj-world"}))
@@ -93,19 +96,19 @@
       :content/desc "The most known classic of coding exercises"}])
 
   ;; create db
-  (d/create-database client {:db-name "clj-world"})
+  (d/create-database (client) {:db-name "clj-world"})
 
   ;; add new schema
-  (d/transact conn {:tx-data content-schema})
+  (d/transact (conn) {:tx-data content-schema})
 
   ;; add some data
-  (d/transact conn {:tx-data fake-data})
+  (d/transact (conn) {:tx-data fake-data})
 
   (d/transact conn {:tx-data [{:content/id (uuid)
                                :content/title "Rock paper & scissor"}]})
 
   ;; connection
-  (d/db conn)
+  (d/db (conn))
 
   (content-by-type :project)
 
