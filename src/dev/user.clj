@@ -10,7 +10,7 @@
 (set-refresh-dirs "src/dev" "src/main")
 
 (defn start []
-  (datomic/run-dev)
+  ;(datomic/run-dev)
   (server/start))
 
 (defn restart

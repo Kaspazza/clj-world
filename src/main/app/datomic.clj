@@ -12,11 +12,11 @@
 (def dev-config {:server-type :dev-local
                  :system "dev"})
 
-(defn client [] (d/client dev-config))
+(def client (d/client dev-config))
 
-(defn conn [] (d/connect (client) {:db-name "clj-world"}))
+(def conn (d/connect client {:db-name "clj-world-dev"}))
 
-;(def db (d/db (conn)))
+(def db (d/db conn))
 
 (defn run-dev []
   (dl/divert-system {:system "clj-world"}))
@@ -50,14 +50,27 @@
 
 
 (defn content-by-type [type]
-  (d/q '[:find (pull ?e [:content/title :content/desc :content/type :content/id :content/img])
+  (d/q '[:find (pull ?e [:content/id])
          :in $ ?type
-         :where [?e :content/type ?type]] (d/db (conn)) type))
+         :where [?e :content/type ?type]] db type))
 
 (defn content-by-id [id]
   (d/q '[:find (pull ?e [:content/title :content/desc :content/type :content/id :content/img])
          :in $ ?id
-         :where [?e :content/id ?id]] (d/db (conn)) id))
+         :where [?e :content/id ?id]] db id))
+
+(def sample
+  "
+  (defn fizz-buzz [n]\n  (condp (fn [a b] (zero? (mod b a))) n\n    15 \"fizzbuzz\"\n    3  \"fizz\"\n    5  \"buzz\"\n    n))
+
+  (comment
+  (fizz-buzz 1)
+  (fizz-buzz 3)
+  (fizz-buzz 5)
+  (fizz-buzz 15)
+  (fizz-buzz 17)
+  (fizz-buzz 42))")
+
 
 (comment
   (import (java.util UUID))
@@ -96,19 +109,28 @@
       :content/desc "The most known classic of coding exercises"}])
 
   ;; create db
-  (d/create-database (client) {:db-name "clj-world"})
+  (d/create-database (client) {:db-name "clj-world-dev"})
 
   ;; add new schema
-  (d/transact (conn) {:tx-data content-schema})
+  (d/transact conn {:tx-data content-schema})
 
   ;; add some data
-  (d/transact (conn) {:tx-data fake-data})
+  (d/transact conn {:tx-data fake-data})
 
-  (d/transact conn {:tx-data [{:content/id (uuid)
-                               :content/title "Rock paper & scissor"}]})
+  (d/transact conn {:tx-data [{:content/id #uuid"1b2d87cb-ddfa-4b6c-b991-4c48301e41a0"
+                               :content/editor "
+  (defn fizz-buzz [n]\n  (condp (fn [a b] (zero? (mod b a))) n\n    15 \"fizzbuzz\"\n    3  \"fizz\"\n    5  \"buzz\"\n    n))
+
+  (comment
+  (fizz-buzz 1)
+  (fizz-buzz 3)
+  (fizz-buzz 5)
+  (fizz-buzz 15)
+  (fizz-buzz 17)
+  (fizz-buzz 42))"}]})
 
   ;; connection
-  (d/db (conn))
+  (d/db conn)
 
   (content-by-type :project)
 
