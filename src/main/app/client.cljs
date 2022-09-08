@@ -48,10 +48,3 @@
   ;; As of Fulcro 3.3.0, this addition will help with stale queries when using dynamic routing:
   (comp/refresh-dynamic-queries! APP)
   (js/console.log "Hot reload"))
-
-(comment
-  (-> APP (::app/state-atom) deref)
-
-  (comp/get-initial-state Root)
-
-  )

@@ -19,14 +19,8 @@
   (action [{:keys [app _state]}]
     (df/load! app [:category/id chosen-id] CategoryHeader {:focus [:category/content]})))
 
-;(defmutation load-editor [{:keys [content-id]}]
-;  (action [{:keys [app _state]}]
-;    (df/load! app [:content/id ])))
-
 (defmutation open-lesson [{:keys [category-id content-id]}]
   (action [{:keys [app _state]}]
-    (prn "params: " {:category-id category-id
-                     :content-id content-id})
     (df/load! app [:content/id content-id] Lesson {:focus [:content/id]})
     (routing/route-to! app Lesson {:category-id category-id
                                    :content-id content-id})))
