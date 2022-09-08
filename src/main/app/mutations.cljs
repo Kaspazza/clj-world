@@ -2,8 +2,14 @@
   (:require [com.fulcrologic.fulcro.mutations :refer [defmutation]]
             [com.fulcrologic.fulcro.data-fetch :as df]
             [app.ui.categories :refer [CategoryHeader Categories]]
-            [app.ui.lesson :refer [Lesson]]
-            [com.fulcrologic.rad.routing :as routing]))
+            [app.ui.lesson :as lesson :refer [Lesson]]
+            [com.fulcrologic.rad.routing :as routing]
+            [applied-science.js-interop :as j]
+            [nextjournal.clojure-mode.test-utils :as test-utils]
+            [app.code-mirror.sci :as sci]
+            [com.fulcrologic.fulcro.components :as comp]
+            ["@codemirror/view" :refer [EditorView]]
+            ))
 
 (defmutation change-category [{:keys [chosen-id]}]
   (action [{:keys [app state]}]
@@ -12,6 +18,10 @@
 (defmutation load-category-lessons [{:keys [chosen-id]}]
   (action [{:keys [app _state]}]
     (df/load! app [:category/id chosen-id] CategoryHeader {:focus [:category/content]})))
+
+;(defmutation load-editor [{:keys [content-id]}]
+;  (action [{:keys [app _state]}]
+;    (df/load! app [:content/id ])))
 
 (defmutation open-lesson [{:keys [category-id content-id]}]
   (action [{:keys [app _state]}]

@@ -23,6 +23,8 @@
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
     [com.fulcrologic.fulcro.data-fetch :as df]))
 
+(declare Lesson)
+
 (def theme
   (.theme EditorView
     (j/lit {".cm-content" {:white-space "pre-wrap"
@@ -52,69 +54,10 @@
                         (.of view/keymap cm-clj/complete-keymap)
                         (.of view/keymap historyKeymap)])
 
-;(def last-result
-;  (atom (sci/eval-string "hello")))
-
-(def sample
-  "
-  (defn fizz-buzz [n]\n  (condp (fn [a b] (zero? (mod b a))) n\n    15 \"fizzbuzz\"\n    3  \"fizz\"\n    5  \"buzz\"\n    n))
-
-  (comment
-  (fizz-buzz 1)
-  (fizz-buzz 3)
-  (fizz-buzz 5)
-  (fizz-buzz 15)
-  (fizz-buzz 17)
-  (fizz-buzz 42))")
-
-;(defn editor [source {:keys [eval?]}]
-;  (let [!view (atom nil)
-;        last-result (when eval? (atom (sci/eval-string source)))
-;        mount! (fn [el]
-;                 (when el
-;                   (reset! !view (new EditorView
-;                                   (j/obj :state
-;                                     (test-utils/make-state
-;                                       (cond-> #js [extensions]
-;                                         eval? (.concat #js [(sci/extension {:modifier "Alt"
-;                                                                             :on-result (partial reset! last-result)})]))
-;                                       source)
-;                                     :parent el)))))]
-;    [:div
-;     [:div {:class "rounded-md mb-0 text-sm monospace overflow-auto relative border shadow-lg bg-white"
-;            :ref mount!
-;            :style {:max-height 410}}]
-;     (when eval?
-;       [:div.mt-3.mv-4.pl-6 {:style {:white-space "pre-wrap" :font-family "var(--code-font)"}}
-;        (prn-str @last-result)])]
-;    ;;THIS IS USED WITH reagent/with-let and called when component is destoryed, so I could turn editor into defsc
-;    #_(finally
-;        (j/call @!view :destroy))))
-
-(defn simple-editor [id]
-  (dom/form {:spellCheck "false"
-             :data-gramm "false"}
-    (dom/div
-      {:className "rounded-md mb-0 text-sm monospace overflow-auto relative border shadow-lg bg-white"
-       :ref (fn [el]
-              (when el
-                (new EditorView
-                  (j/obj :state
-                    (test-utils/make-state
-                      (cond-> #js [extensions]
-                        true (.concat #js [(sci/extension {:modifier "Alt"
-                                                           :on-result (fn [result]
-                                                                        (comp/transact! APP
-                                                                          `[(app.mutations/update-repl-state {:repl-value ~result
-                                                                                                              :content-id ~id})]))})])) sample)
-                    :parent el))))
-       :style {:height 950}})))
-
-
-(def tabs [{:name "Description" :current true}
+(def tabs [{:name "Description" :current false}
            {:name "Solution" :current false}
            {:name "Cheatsheet" :current false}
-           {:name "Editor" :current false}])
+           {:name "Editor" :current true}])
 
 (defn editor-tabs []
   (dom/div
@@ -140,13 +83,50 @@
                  (:name tab)))
           tabs)))))
 
+
+(def editor-view-state (atom nil))
+
+(defsc Editor [this {:editor/keys [id text]
+                     :ui/keys [editor-obj]} {:keys [content-id]}]
+  {:ident :editor/id
+   :query [:editor/id :editor/text :ui/editor-obj]
+   :initLocalState (fn [this state]
+                     (when state
+                       {:editor-ref (fn [el]
+                                      (when el
+                                        (reset! editor-view-state (new EditorView
+                                                                    (j/obj :state
+                                                                      (test-utils/make-state
+                                                                        (cond-> #js [extensions]
+                                                                          true (.concat #js [(sci/extension {:modifier "Alt"
+                                                                                                             :on-result (fn [evaluated-line result]
+                                                                                                                          (comp/transact! APP
+                                                                                                                            `[(app.mutations/update-repl-state {:repl-value ~result
+                                                                                                                                                                :content-id ~(:content-id (:fulcro.client.primitives/computed state))
+                                                                                                                                                                :evaluated-line ~evaluated-line})]))})])) (:editor/text state))
+                                                                      :parent el)))))}))
+   :componentWillUnmount (fn [this]
+                           (some-> @editor-view-state
+                             (j/call :destroy)))
+   }
+  (when id
+    (let [editor-ref (comp/get-state this :editor-ref)]
+      (dom/form {:spellCheck "false"
+                 :data-gramm "false"}
+        (dom/div
+          {:className "rounded-md mb-0 text-sm monospace overflow-auto relative border shadow-lg bg-white"
+           :ref editor-ref
+           :style {:height 950}})))))
+
+(def ui-editor (comp/factory Editor {:keyfn :editor/id}))
+
 (defsc Lesson [this {:ui/keys [repl-state]
-                     :content/keys [id desc title type]
+                     :content/keys [id desc title type editor]
                      :as props}]
-  {:query [:content/id :content/desc :content/title :content/type :ui/repl-state]
+  {:query [:content/id :content/desc :content/title :content/type :ui/repl-state {:content/editor (comp/get-query Editor)}]
    :route-segment ["categories" :category-id :content-id]
    :will-enter (fn [_app {:keys [content-id] :as props}]
-                 (df/load! APP [:content/id (uuid content-id)] Lesson #_{:focus [:content/id]})
+                 (df/load! APP [:content/id (uuid content-id)] Lesson)
                  (dr/route-immediate [:content/id (uuid content-id)]))
    :initial-state {:ui/repl-state []}
    :pre-merge (fn [env]
@@ -155,7 +135,7 @@
                   (:current-normalized env)
                   (:data-tree env)))
    :ident :content/id}
-  (dom/div {:className "h-full flex mt-5"}
+  (dom/div {:className "h-full flex mt-5 red"}
     (dom/div {:className "flex-1 flex items-stretch overflow-hidden"}
       (dom/main {:className "flex-1 overflow-y-auto"}
         (dom/div
@@ -164,24 +144,17 @@
             (dom/div {:className "px-4 py-5 sm:px-6"}
               (editor-tabs))
             (dom/div {:className "px-4 py-5 sm:p-6 min-h-full"}
-              (simple-editor id)))))
+              (ui-editor (comp/computed editor {:content-id id}))))))
 
       (dom/aside {:className "hidden w-96 bg-white border-l border-gray-200 overflow-y-auto lg:block"}
-        (if (seq repl-state) repl-state "Hi, I'm your REPL, feel free to use me!")))))
+        (if (seq repl-state)
+          (dom/div
+            (map (fn [repl-value]
+                   (dom/div
+                     (dom/div
+                       (dom/div (:line repl-value))
+                       (dom/div " -> ")
+                       (dom/div (:value repl-value)))
+                     (dom/hr))) repl-state))
 
-;(defn samples []
-;  (into [:<>]
-;    (for [source ["(comment
-;  (fizz-buzz 1)
-;  (fizz-buzz 3)
-;  (fizz-buzz 5)
-;  (fizz-buzz 15)
-;  (fizz-buzz 17)
-;  (fizz-buzz 42))
-;(defn fizz-buzz [n]
-;  (condp (fn [a b] (zero? (mod b a))) n
-;    15 \"fizzbuzz\"
-;    3  \"fizz\"
-;    5  \"buzz\"
-;    n))"]]
-;      [editor source {:eval? true}])))
+          "Hi, I'm your REPL, feel free to use me!")))))
