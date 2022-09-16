@@ -6,5 +6,6 @@
 
 (defonce APP (app/fulcro-app
                {:remotes {:remote (http/fulcro-http-remote {})}
-                :render-middleware (when goog.DEBUG js/holyjak.fulcro_troubleshooting.troubleshooting_render_middleware)}))
+                ;:render-middleware (when goog.DEBUG js/holyjak.fulcro_troubleshooting.troubleshooting_render_middleware)
+                }))
 

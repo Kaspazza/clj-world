@@ -32,7 +32,7 @@
 (defn ^:export init
   "Shadow-cljs sets this up to be our entry-point function. See shadow-cljs.edn `:init-fn` in the modules of the main build."
   []
-  (set! holyjak.fulcro-troubleshooting/*config* {:error-boundaries? false})
+  ;(set! holyjak.fulcro-troubleshooting/*config* {:error-boundaries? false})
   (app/set-root! APP Root {:initialize-state? true})
   (dr/initialize! APP)
   (history/install-route-history! APP (html5-history))

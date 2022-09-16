@@ -77,6 +77,7 @@
     <orderEntry type="library" name="Deps: aero:1.1.6" level="project" />
     <orderEntry type="library" name="Deps: org.ow2.asm/asm:9.2" level="project" />
     <orderEntry type="library" name="Deps: org.slf4j/jul-to-slf4j:1.7.36" level="project" />
+    <orderEntry type="library" name="Deps: holyjak/fulcro-troubleshooting:d58f84" level="project" />
     <orderEntry type="library" name="Deps: lambdaisland/tools.namespace:0.1.247" level="project" />
     <orderEntry type="library" name="Deps: org.apache.httpcomponents/httpcore:4.4.13" level="project" />
     <orderEntry type="library" name="Deps: thheller/shadow-util:0.7.0" level="project" />
