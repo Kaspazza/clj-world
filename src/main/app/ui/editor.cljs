@@ -48,13 +48,13 @@
 (defn editor-ref-fn [state]
   (fn [el]
     (when el
-      (let [content-id (:content-id (:fulcro.client.primitives/computed state))
+      (let [lesson-id (:lesson-id (:fulcro.client.primitives/computed state))
             editor-text (:editor/text state)
 
             update-repl-transaction (fn [result evaluated-line]
                                       (comp/transact! APP
                                         `[(app.mutations/update-repl-state {:repl-value ~result
-                                                                            :content-id ~content-id
+                                                                            :lesson-id ~lesson-id
                                                                             :evaluated-line ~evaluated-line})]))
 
             on-evaluate-fn (fn [evaluated-line result] (update-repl-transaction result evaluated-line))
@@ -71,7 +71,7 @@
                                 :parent el))]
         (reset! editor-view-state editor-view-obj)))))
 
-(defsc Editor [this {:editor/keys [id text]} {:keys [content-id]}]
+(defsc Editor [this {:editor/keys [id text]} {:keys [lesson-id]}]
   {:ident :editor/id
    :query [:editor/id :editor/text]
    :initLocalState (fn [_ state]

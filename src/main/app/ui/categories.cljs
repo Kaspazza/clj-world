@@ -4,10 +4,10 @@
             [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
             [app.application :refer [APP]]))
 
-(defsc Content [this {:content/keys [id type title desc] :as props}]
-  {:query [:content/id :content/type :content/title :content/desc]
+(defsc LessonPreview [this {:lesson/keys [id type title desc] :as props}]
+  {:query [:lesson/id :lesson/type :lesson/title :lesson/desc]
    :initial-state {}
-   :ident :content/id}
+   :ident :lesson/id}
   (dom/li {:className "relative"}
     (dom/div {:className "group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100
                           focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100
@@ -19,33 +19,33 @@
                    :className "absolute inset-0 focus:outline-none"
                    :onClick (fn [_e]
                               (comp/transact! this `[(app.mutations/open-lesson {:category-id ~(name type)
-                                                                                 :content-id ~id})]))}
+                                                                                 :lesson-id ~id})]))}
         (dom/span {:className "sr-only"} "View details for " title)))
     (dom/p {:className "mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"} title)
     (dom/p {:className "block text-sm font-medium text-gray-500 pointer-events-none"} desc)))
 
-(def ui-content (comp/factory Content {:keyfn :content/id}))
+(def ui-lesson-preview (comp/factory LessonPreview {:keyfn :lesson/id}))
 
 (defn load-lessons! [this]
   (let [active? (:ui/active? (comp/props this))
         category-id (:category/id (comp/props this))
-        content (:category/content (comp/props this))]
-    (when (and active? (empty? content))
+        lesson (:category/lesson (comp/props this))]
+    (when (and active? (empty? lesson))
       (comp/transact! this `[(app.mutations/load-category-lessons {:chosen-id ~category-id})]))))
 
 (defsc CategoryHeader
-  [this {:category/keys [id content] category-name :category/name :ui/keys [first? last? active?]}]
-  {:query [:category/id :category/name {:category/content (comp/get-query Content)} :ui/first? :ui/last? :ui/active?]
+  [this {:category/keys [id lessons] category-name :category/name :ui/keys [first? last? active?]}]
+  {:query [:category/id :category/name {:category/lessons (comp/get-query LessonPreview)} :ui/first? :ui/last? :ui/active?]
    :componentDidMount (fn [this]
                         (load-lessons! this))
    :componentDidUpdate (fn [this]
                          (load-lessons! this))
-   :initial-state (fn [{:category/keys [id content]
+   :initial-state (fn [{:category/keys [id lessons]
                         category-name :category/name
                         :ui/keys [first? last? active?]}]
                     {:category/id id
                      :category/name category-name
-                     :category/content content
+                     :category/lessons lessons
                      :ui/first? first?
                      :ui/last? last?
                      :ui/active? active?})
@@ -71,9 +71,9 @@
    :will-enter (fn [_app {:keys [category-id]}]
                  (comp/transact! APP `[(app.mutations/change-active-tab {:chosen-id ~category-id})])
                  (dr/route-immediate [:component/id ::Categories]))
-   :initial-state {:categories/project {:category/id :project :category/name "Projects" :category/content [] :ui/first? true :ui/last? false :ui/active? false}
-                   :categories/theory {:category/id :theory :category/name "Theory" :category/content [] :ui/first? false :ui/last? false :ui/active? false}
-                   :categories/exercise {:category/id :exercise :category/name "Exercises" :category/content [] :ui/first? false :ui/last? true :ui/active? false}}
+   :initial-state {:categories/project {:category/id :project :category/name "Projects" :category/lessons [] :ui/first? true :ui/last? false :ui/active? false}
+                   :categories/theory {:category/id :theory :category/name "Theory" :category/lessons [] :ui/first? false :ui/last? false :ui/active? false}
+                   :categories/exercise {:category/id :exercise :category/name "Exercises" :category/lessons [] :ui/first? false :ui/last? true :ui/active? false}}
    :ident (fn [] [:component/id ::Categories])}
   (dom/div
     (dom/nav {:classes ["relative z-0 rounded-lg shadow flex divide-x divide-gray-200"] :aria-label "Tabs"}
@@ -81,8 +81,8 @@
       (ui-category-header theory)
       (ui-category-header exercise))
     (dom/ul {:role "list" :className "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 mt-4 mx-4"}
-      (map #(ui-content %)
-        (:category/content (first
+      (map #(ui-lesson-preview %)
+        (:category/lessons (first
                              (filter (fn [item]
                                        (:ui/active? item))
                                [project theory exercise])))))))

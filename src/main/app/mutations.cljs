@@ -17,13 +17,13 @@
 
 (defmutation load-category-lessons [{:keys [chosen-id]}]
   (action [{:keys [app _state]}]
-    (df/load! app [:category/id chosen-id] CategoryHeader {:focus [:category/content]})))
+    (df/load! app [:category/id chosen-id] CategoryHeader {:focus [:category/lessons]})))
 
-(defmutation open-lesson [{:keys [category-id content-id]}]
+(defmutation open-lesson [{:keys [category-id lesson-id]}]
   (action [{:keys [app _state]}]
-    (df/load! app [:content/id content-id] Lesson {:focus [:content/id]})
+    (df/load! app [:lesson/id lesson-id] Lesson {:focus [:lesson/id]})
     (routing/route-to! app Lesson {:category-id category-id
-                                   :content-id content-id})))
+                                   :lesson-id lesson-id})))
 
 (defmutation change-active-tab [{:keys [chosen-id]}]
   (action [{:keys [app state]}]
@@ -35,7 +35,7 @@
                    (swap! state assoc-in [:category/id category-id :ui/active?] false)))
                (into [] (keys (:category/id @state))))))))
 
-(defmutation update-repl-state [{:keys [content-id repl-value evaluated-line]}]
+(defmutation update-repl-state [{:keys [lesson-id repl-value evaluated-line]}]
   (action [{:keys [app state]}]
-    (swap! state update-in [:content/id content-id :ui/repl-state] (fn [v]
+    (swap! state update-in [:lesson/id lesson-id :ui/repl-state] (fn [v]
                                                                      (into [] (conj v {:line (str evaluated-line) :value (str repl-value)}))))))

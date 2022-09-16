@@ -21,43 +21,43 @@
 (defn run-dev []
   (dl/divert-system {:system "clj-world"}))
 
-(def content-schema
-  [{:db/ident :content/id
+(def lesson-schema
+  [{:db/ident :lesson/id
     :db/valueType :db.type/uuid
     :db/unique :db.unique/identity
     :db/cardinality :db.cardinality/one
-    :db/doc "The id of content"}
+    :db/doc "The id of lesson"}
 
-   {:db/ident :content/type
+   {:db/ident :lesson/type
     :db/valueType :db.type/keyword
     :db/cardinality :db.cardinality/one
-    :db/doc "The category (type) of content"}
+    :db/doc "The category (type) of lesson"}
 
-   {:db/ident :content/title
+   {:db/ident :lesson/title
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
     :db/doc "The title of lesson"}
 
-   {:db/ident :content/desc
+   {:db/ident :lesson/desc
     :db/valueType :db.type/string
     :db/cardinality :db.cardinality/one
     :db/doc "The description of lesson"}
 
-   {:db/ident :content/img
+   {:db/ident :lesson/img
     :db/valueType :db.type/uri
     :db/cardinality :db.cardinality/one
     :db/doc "Preview image of lesson"}])
 
 
-(defn content-by-type [type]
-  (d/q '[:find (pull ?e [:content/id])
+(defn lesson-by-type [type]
+  (d/q '[:find (pull ?e [:lesson/id])
          :in $ ?type
-         :where [?e :content/type ?type]] db type))
+         :where [?e :lesson/type ?type]] db type))
 
-(defn content-by-id [id]
-  (d/q '[:find (pull ?e [:content/title :content/desc :content/type :content/id :content/img])
+(defn lesson-by-id [id]
+  (d/q '[:find (pull ?e [:lesson/title :lesson/desc :lesson/type :lesson/id :lesson/img])
          :in $ ?id
-         :where [?e :content/id ?id]] db id))
+         :where [?e :lesson/id ?id]] db id))
 
 (def sample
   "
@@ -78,47 +78,47 @@
   (defn uuid [] (UUID/randomUUID))
 
   (def fake-data
-    [{:content/id (uuid)
-      :content/type :project
-      :content/title "Rock paper & scissor"
-      :content/desc "First content text"}
+    [{:lesson/id (uuid)
+      :lesson/type :project
+      :lesson/title "Rock paper & scissor"
+      :lesson/desc "First lesson text"}
 
-     {:content/id (uuid)
-      :content/type :project
-      :content/title "Guess number"
-      :content/desc "In this project we will learn how to"}
+     {:lesson/id (uuid)
+      :lesson/type :project
+      :lesson/title "Guess number"
+      :lesson/desc "In this project we will learn how to"}
 
-     {:content/id (uuid)
-      :content/type :project
-      :content/title "Hangman"
-      :content/desc "Let's hang out together"}
+     {:lesson/id (uuid)
+      :lesson/type :project
+      :lesson/title "Hangman"
+      :lesson/desc "Let's hang out together"}
 
-     {:content/id (uuid)
-      :content/type :theory
-      :content/title "JVM"
-      :content/desc "Today we will learn about JVM"}
+     {:lesson/id (uuid)
+      :lesson/type :theory
+      :lesson/title "JVM"
+      :lesson/desc "Today we will learn about JVM"}
 
-     {:content/id (uuid)
-      :content/type :theory
-      :content/title "Data structures"
-      :content/desc "Did you ever wonder how the vector works internally?"}
+     {:lesson/id (uuid)
+      :lesson/type :theory
+      :lesson/title "Data structures"
+      :lesson/desc "Did you ever wonder how the vector works internally?"}
 
-     {:content/id (uuid)
-      :content/type :exercise
-      :content/title "FizzBuzz"
-      :content/desc "The most known classic of coding exercises"}])
+     {:lesson/id (uuid)
+      :lesson/type :exercise
+      :lesson/title "FizzBuzz"
+      :lesson/desc "The most known classic of coding exercises"}])
 
   ;; create db
   (d/create-database (client) {:db-name "clj-world-dev"})
 
   ;; add new schema
-  (d/transact conn {:tx-data content-schema})
+  (d/transact conn {:tx-data lesson-schema})
 
   ;; add some data
   (d/transact conn {:tx-data fake-data})
 
-  (d/transact conn {:tx-data [{:content/id #uuid"1b2d87cb-ddfa-4b6c-b991-4c48301e41a0"
-                               :content/editor "
+  (d/transact conn {:tx-data [{:lesson/id #uuid"1b2d87cb-ddfa-4b6c-b991-4c48301e41a0"
+                               :lesson/editor "
   (defn fizz-buzz [n]\n  (condp (fn [a b] (zero? (mod b a))) n\n    15 \"fizzbuzz\"\n    3  \"fizz\"\n    5  \"buzz\"\n    n))
 
   (comment
@@ -132,6 +132,6 @@
   ;; connection
   (d/db conn)
 
-  (content-by-type :project)
+  (lesson-by-type :project)
 
   )

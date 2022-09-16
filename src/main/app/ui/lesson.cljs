@@ -49,19 +49,19 @@
     (dom/div "Hi, I'm your REPL, feel free to use me!")))
 
 (defsc Lesson [_ {:ui/keys [repl-state]
-                  :content/keys [id desc title type editor]}]
-  {:query [:content/id :content/desc :content/title :content/type :ui/repl-state {:content/editor (comp/get-query Editor)}]
-   :route-segment ["categories" :category-id :content-id]
-   :will-enter (fn [app {:keys [content-id] :as props}]
-                 (df/load! app [:content/id (uuid content-id)] Lesson)
-                 (dr/route-immediate [:content/id (uuid content-id)]))
+                  :lesson/keys [id desc title type editor]}]
+  {:query [:lesson/id :lesson/desc :lesson/title :lesson/type :ui/repl-state {:lesson/editor (comp/get-query Editor)}]
+   :route-segment ["categories" :category-id :lesson-id]
+   :will-enter (fn [app {:keys [lesson-id] :as props}]
+                 (df/load! app [:lesson/id (uuid lesson-id)] Lesson)
+                 (dr/route-immediate [:lesson/id (uuid lesson-id)]))
    :initial-state {:ui/repl-state []}
    :pre-merge (fn [env]
                 (merge
                   (comp/get-initial-state Lesson)
                   (:current-normalized env)
                   (:data-tree env)))
-   :ident :content/id}
+   :ident :lesson/id}
   (dom/div {:className "h-full flex mt-5 red"}
     (dom/div {:className "flex-1 flex items-stretch overflow-hidden"}
 
@@ -71,7 +71,7 @@
             (dom/div {:className "px-4 py-5 sm:px-6"}
               (lesson-view-tabs))
             (dom/div {:className "px-4 py-5 sm:p-6 min-h-full"}
-              (ui-editor (comp/computed editor {:content-id id}))))))
+              (ui-editor (comp/computed editor {:lesson-id id}))))))
 
       (dom/aside {:className "hidden w-96 bg-white border-l border-gray-200 overflow-y-auto lg:block"}
         (repl-view repl-state)))))
