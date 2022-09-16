@@ -25,8 +25,8 @@
     (routing/route-to! app Lesson {:category-id category-id
                                    :lesson-id lesson-id})))
 
-(defmutation change-active-tab [{:keys [chosen-id]}]
-  (action [{:keys [app state]}]
+(defmutation change-category-tab [{:keys [chosen-id]}]
+  (action [{:keys [_app state]}]
     (let [chosen-id (keyword chosen-id)]
       (doall (map
                (fn [category-id]
@@ -36,6 +36,10 @@
                (into [] (keys (:category/id @state))))))))
 
 (defmutation update-repl-state [{:keys [lesson-id repl-value evaluated-line]}]
-  (action [{:keys [app state]}]
+  (action [{:keys [_app state]}]
     (swap! state update-in [:lesson/id lesson-id :ui/repl-state] (fn [v]
-                                                                     (into [] (conj v {:line (str evaluated-line) :value (str repl-value)}))))))
+                                                                   (into [] (conj v {:line (str evaluated-line) :value (str repl-value)}))))))
+
+(defmutation change-editor-tab [{:keys [lesson-id tab-type]}]
+  (action [{:keys [_app state]}]
+    (swap! state assoc-in [:lesson/id lesson-id :ui/tab] tab-type)))

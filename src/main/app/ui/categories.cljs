@@ -69,7 +69,7 @@
            {:categories/exercise (comp/get-query CategoryHeader)}]
    :route-segment ["categories" :category-id]
    :will-enter (fn [_app {:keys [category-id]}]
-                 (comp/transact! APP `[(app.mutations/change-active-tab {:chosen-id ~category-id})])
+                 (comp/transact! APP `[(app.mutations/change-category-tab {:chosen-id ~category-id})])
                  (dr/route-immediate [:component/id ::Categories]))
    :initial-state {:categories/project {:category/id :project :category/name "Projects" :category/lessons [] :ui/first? true :ui/last? false :ui/active? false}
                    :categories/theory {:category/id :theory :category/name "Theory" :category/lessons [] :ui/first? false :ui/last? false :ui/active? false}
