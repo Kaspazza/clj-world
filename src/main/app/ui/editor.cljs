@@ -1,12 +1,12 @@
 (ns app.ui.editor
   (:require
-    ["@codemirror/fold" :as fold]
+    ["@codemirror/language" :refer [foldGutter syntaxHighlighting defaultHighlightStyle indentNodeProp Language LanguageSupport]]
+    ["@lezer/markdown" :as lezer-markdown]
     [app.application :refer [APP]]
-    ["@codemirror/gutter" :refer [lineNumbers]]
-    ["@codemirror/highlight" :as highlight]
-    ["@codemirror/history" :refer [history historyKeymap]]
-    ["@codemirror/state" :refer [EditorState]]
-    ["@codemirror/view" :as view :refer [EditorView]]
+    ["@codemirror/commands" :refer [history historyKeymap]]
+    ["@codemirror/state" :refer [EditorState Prec]]
+    ["@codemirror/view" :as view :refer [EditorView keymap lineNumbers]]
+    ["@codemirror/lang-markdown" :as MD :refer [markdown markdownLanguage]]
     [applied-science.js-interop :as j]
     [app.code-mirror.sci :as sci]
     [nextjournal.clojure-mode :as cm-clj]
@@ -34,12 +34,41 @@
             "&.cm-focused .cm-cursor" {:visibility "visible"}
             })))
 
+(defn doc? [^js node] (== (.-Document lezer-markdown/parser.nodeTypes) (.. node -type -id)))
+
+(defn handle-open-backticks [^js view]
+  (let [state (.-state view)]
+    (when (doc? (.-tree state))
+      (let [sel (.. state -selection -main)]
+        (when (and (.-empty sel)
+                (identical? "``" (.. state -doc (lineAt (.-anchor sel)) -text)))
+          (.dispatch view
+            (.update state (j/lit {:changes [{:insert "\n```"
+                                              :from (.-anchor sel)}]}))))))))
+
+(def ^js markdown-language-support
+  (let [^js md
+        (markdown (j/obj :defaultCodeLanguage cm-clj/language-support
+                    :base (Language.
+                            (.-data markdownLanguage)
+                            (.. markdownLanguage
+                              -parser (configure
+                                        ;; fixes indentation base for clojure inside fenced code blocks ⬇
+                                        (j/lit {:props [(.add indentNodeProp
+                                                          (j/obj :Document (constantly 0)))]}))))))]
+    (LanguageSupport.
+      (.-language md)
+      (array (.-support md)
+        (.high Prec (.of keymap (j/lit [{:key \` :run handle-open-backticks}])))))))
+
+(defonce markdown-etensions #js[markdown-language-support])
+
 (defonce extensions #js[theme
                         (history)
-                        highlight/defaultHighlightStyle
+                        (syntaxHighlighting defaultHighlightStyle)
                         (view/drawSelection)
                         (lineNumbers)
-                        (fold/foldGutter)
+                        (foldGutter)
                         (.. EditorState -allowMultipleSelections (of true))
                         cm-clj/default-extensions
                         (.of view/keymap cm-clj/complete-keymap)

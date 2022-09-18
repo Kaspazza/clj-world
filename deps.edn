@@ -9,7 +9,7 @@
         com.google.guava/guava {:mvn/version "31.1-jre"}
         com.datomic/dev-local {:mvn/version "1.0.243"}
         nextjournal/clojure-mode {:git/url "https://github.com/nextjournal/clojure-mode"
-                                  :sha "699a445ebf2767f41fd0b6eeed5a008511702be6"}
+                                  :sha "a408a8cb2154107e80bb8deae0cda48be911571f"}
         org.babashka/sci {:mvn/version "0.3.31"}
         ;; Unified logging for server
         com.taoensso/timbre {:mvn/version "5.2.1"}
