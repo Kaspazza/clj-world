@@ -16,10 +16,12 @@
         [:head {:lang "en"}
          [:meta {:charset "UTF-8"}]
          [:link {:href "/dist/output.css" :rel "stylesheet"}]
-         [:link {:href "styles.css" :rel "stylesheet"}]
+         [:link {:href "/css/styles.css" :rel "stylesheet"}]
+         [:link {:href "/css/general.css" :rel "stylesheet"}]
+         [:link {:href "/css/markdown.css" :rel "stylesheet"}]
          [:link {:href "favicon.ico" :rel "shortcut icon"}]]
         [:body
-         [:div#app]
+         [:div {:id "app"}]
          [:script {:src "/js/main/main.js"}]]))
 
 (def not-found-handler
@@ -33,7 +35,8 @@
           (str/starts-with? uri "/images")
           (str/starts-with? uri "/files")
           (str/starts-with? uri "/js")
-          (str/starts-with? uri "/dist"))
+          (str/starts-with? uri "/dist")
+          (str/starts-with? uri "/css"))
       (ring-handler req)
 
       (-> (resp/response (generate-index))

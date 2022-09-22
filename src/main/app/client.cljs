@@ -26,7 +26,7 @@
 (defsc Root [_this {:root/keys [router]}]
   {:query [{:root/router (comp/get-query RootRouter)}]
    :initial-state {:root/router {}}}
-  (dom/div
+  (dom/div {:className "h-full"}
     (ui-root-router router)))
 
 (defn ^:export init

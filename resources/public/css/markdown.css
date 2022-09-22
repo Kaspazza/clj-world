@@ -1,0 +1,75 @@
+.md-output {
+    margin: 0 auto;
+    background: #444;
+    padding: 20px;
+    font-size: 15px;
+    color: #aaa;
+    text-shadow: 0px 1px 1px #171717;
+    -webkit-box-shadow: 0px 2px 3px #555;
+    -moz-box-shadow: 0px 2px 3px #555;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+
+.md-output hr {
+             height: 3px;
+             border: 0;
+             background-color: #333;
+           }
+
+.md-output h1 {
+             font-size: 35px;
+            }
+
+.md-output h1, h2, h3, h4 {
+            	display: block; text-decoration: none;
+            	font: Helvetica, Arial, Sans-Serif;
+            	color: #999; text-shadow: 0px 3px 8px #2a2a2a;
+             }
+
+.md-output h2 {
+              font-size: 30px;
+             }
+.md-output h3 {
+      font-size: 25px;
+     }
+.md-output h4 {
+      font-size: 20px;
+     }
+
+.md-output textarea {
+	width: 600px; margin: 0 auto; background: #222; padding: 20px;
+	font-size: 22px; color: #555; text-shadow: 0px 2px 3px #171717;
+
+	-webkit-box-shadow: 0px 2px 3px #555;
+	-moz-box-shadow: 0px 2px 3px #555;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+}
+
+.md-output pre {
+        margin: 0 auto; background: #222; padding: 20px;
+	font-size: 15px; color: #555; text-shadow: 0px 2px 3px #171717;
+	margin-bottom: 20px;
+	-webkit-box-shadow: 0px 2px 3px #555;
+	-moz-box-shadow: 0px 2px 3px #555;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+}
+
+.md-output a {
+	text-decoration: none;
+	font: 18px Helvetica, Arial, Sans-Serif;
+	color: #999; text-shadow: 0px 3px 8px #2a2a2a;
+ }
+
+.md-output a:hover {
+        color: #a0a0a0; text-shadow: 0px 5px 8px #2a2a2a;
+}
+
+.md-output hr {
+  height: 3px;
+  border: 0;
+  background-color: #333;
+}
+

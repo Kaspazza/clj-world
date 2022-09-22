@@ -1,6 +1,6 @@
 to start shadow-cljs: npx shadow-cljs watch main
 
-to start tailwind watch files: npx tailwindcss -i ./resources/public/styles.css -o ./resources/public/dist/output.css --watch
+to start tailwind watch files: npx tailwindcss -i ./resources/public/css/styles.css -o ./resources/public/dist/output.css --watch
 
 In server.clj run (start) in repl
 

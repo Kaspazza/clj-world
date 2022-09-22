@@ -112,10 +112,10 @@
   (when id
     (let [editor-ref (comp/get-state this :editor-ref)]
       (dom/form {:spellCheck "false"
-                 :data-gramm "false"}
+                 :data-gramm "false"
+                 :className "h-full"}
         (dom/div
-          {:className "rounded-md mb-0 text-sm monospace overflow-auto relative border shadow-lg bg-white"
-           :ref editor-ref
-           :style {:height 950}})))))
+          {:className "rounded-md h-full mb-0 text-sm monospace overflow-auto relative border shadow-lg bg-white"
+           :ref editor-ref})))))
 
 (def ui-editor (comp/factory Editor {:keyfn :editor/id}))

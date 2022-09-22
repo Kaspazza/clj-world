@@ -43,10 +43,22 @@
     :db/cardinality :db.cardinality/one
     :db/doc "The description of lesson"}
 
+   {:db/ident :lesson/full-desc
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc "Detailed description of lesson"}
+
    {:db/ident :lesson/img
     :db/valueType :db.type/uri
     :db/cardinality :db.cardinality/one
-    :db/doc "Preview image of lesson"}])
+    :db/doc "Preview image of lesson"}
+
+   {:db/ident :lesson/editors
+    :db/valueType :db.type/tuple
+    :db/cardinality :db.cardinality/one
+    :db/doc "Tuple containing editor states"}])
+
+
 
 
 (defn lesson-by-type [type]
@@ -55,7 +67,7 @@
          :where [?e :lesson/type ?type]] db type))
 
 (defn lesson-by-id [id]
-  (d/q '[:find (pull ?e [:lesson/title :lesson/desc :lesson/type :lesson/id :lesson/img])
+  (d/q '[:find (pull ?e [:lesson/title :lesson/desc :lesson/full-desc :lesson/type :lesson/id :lesson/img])
          :in $ ?id
          :where [?e :lesson/id ?id]] db id))
 
@@ -106,7 +118,8 @@
      {:lesson/id (uuid)
       :lesson/type :exercise
       :lesson/title "FizzBuzz"
-      :lesson/desc "The most known classic of coding exercises"}])
+      :lesson/desc "The most known classic of coding exercises"
+      :lesson/full-desc "Jedzą, piją, lulki palą,\nTańce, hulanka, swawola;\nLedwie karczmy nie rozwalą,\nHa, ha! Hi, hi! hejże! hola!\nTwardowski siadł w końcu stoła,\nPodparł się w boki jak basza:\n„Hulaj dusza! hulaj!” woła,\nŚmieszy, tumani, przestrasza. \nŻołnierzowi, co grał zucha,\nWszystkich łaje i potrąca,\nŚwisnął szablą koło ucha:\nJuż z żołnierza masz zająca.\nNa patrona z trybunału,\nCo milczkiem wypróżniał rondel,\nZadzwonił kieską, pomału:\nZ patrona robi się kondel.\nSzewcu w nos wyciął trzy szczutki,\nDo łba przymknął trzy rureczki,\nCmoknął: cmok! i gdańskiej wódki\nWytoczył ze łba pół beczki. \nWtem, gdy wódkę pił z kielicha,\nKielich zaświstał, zazgrzytał;\nPatrzy na dno: — „Co u licha?\nPo coś tu, kumie, zawitał?”\nDiablik to był w wódce na dnie:\nIstny Niemiec, sztuczka kusa;\nSkłonił się gościom układnie,\nZdjął kapelusz i dał susa.\nZ kielicha aż na podłogę\nPada, rośnie na dwa łokcie,\nNos jak haczyk, kurzą nogę,\nI krogulcze ma paznokcie. \n„A, Twardowski… witam bracie!”\nTo mówiąc, bieży obcesem:\n„Cóż to, czyliż mię nie znacie?\nJestem Mefistofelesem.\nWszak ze mnąś na Łysej Górze\nRobił o duszę zapisy:\nCyrograf na byczej skórze\nPodpisałeś ty i bisy.\nMiały słuchać twego rymu;\nTy, jak dwa lata przebiegą,\nMiałeś pojechać do Rzymu,\nBy cię tam porwać jak swego.\nJuż i siedem lat uciekło,\nCyrograf nadal nie służy:\nTy, czarami dręcząc piekło,\nAni myślisz o podróży.\nAle zemsta, choć leniwa,\nNagnała cię w nasze sieci:\nTa karczma Rzym się nazywa…\nKładę areszt na waszeci”. \nTwardowski ku drzwiom się kwapił \nNa takie dictum acerbum;\nDiabeł za kontusz ułapił:\n„A gdzie jest nobile verbum?” \nCo tu począć? kusa rada,\nPrzyjdzie już nałożyć głową…\nTwardowski na koncept wpada\nI zadaje trudność nową.\n"}])
 
   ;; create db
   (d/create-database (client) {:db-name "clj-world-dev"})
@@ -116,6 +129,12 @@
 
   ;; add some data
   (d/transact conn {:tx-data fake-data})
+
+  (d/transact conn {:tx-data [{:lesson/id (uuid)
+                              :lesson/type :exercise
+                              :lesson/title "FizzBuzz"
+                              :lesson/desc "The most known classic of coding exercises"
+                              :lesson/full-desc "Jedzą, piją, lulki palą,\nTańce, hulanka, swawola;\nLedwie karczmy nie rozwalą,\nHa, ha! Hi, hi! hejże! hola!\nTwardowski siadł w końcu stoła,\nPodparł się w boki jak basza:\n„Hulaj dusza! hulaj!” woła,\nŚmieszy, tumani, przestrasza. \nŻołnierzowi, co grał zucha,\nWszystkich łaje i potrąca,\nŚwisnął szablą koło ucha:\nJuż z żołnierza masz zająca.\nNa patrona z trybunału,\nCo milczkiem wypróżniał rondel,\nZadzwonił kieską, pomału:\nZ patrona robi się kondel.\nSzewcu w nos wyciął trzy szczutki,\nDo łba przymknął trzy rureczki,\nCmoknął: cmok! i gdańskiej wódki\nWytoczył ze łba pół beczki. \nWtem, gdy wódkę pił z kielicha,\nKielich zaświstał, zazgrzytał;\nPatrzy na dno: — „Co u licha?\nPo coś tu, kumie, zawitał?”\nDiablik to był w wódce na dnie:\nIstny Niemiec, sztuczka kusa;\nSkłonił się gościom układnie,\nZdjął kapelusz i dał susa.\nZ kielicha aż na podłogę\nPada, rośnie na dwa łokcie,\nNos jak haczyk, kurzą nogę,\nI krogulcze ma paznokcie. \n„A, Twardowski… witam bracie!”\nTo mówiąc, bieży obcesem:\n„Cóż to, czyliż mię nie znacie?\nJestem Mefistofelesem.\nWszak ze mnąś na Łysej Górze\nRobił o duszę zapisy:\nCyrograf na byczej skórze\nPodpisałeś ty i bisy.\nMiały słuchać twego rymu;\nTy, jak dwa lata przebiegą,\nMiałeś pojechać do Rzymu,\nBy cię tam porwać jak swego.\nJuż i siedem lat uciekło,\nCyrograf nadal nie służy:\nTy, czarami dręcząc piekło,\nAni myślisz o podróży.\nAle zemsta, choć leniwa,\nNagnała cię w nasze sieci:\nTa karczma Rzym się nazywa…\nKładę areszt na waszeci”. \nTwardowski ku drzwiom się kwapił \nNa takie dictum acerbum;\nDiabeł za kontusz ułapił:\n„A gdzie jest nobile verbum?” \nCo tu począć? kusa rada,\nPrzyjdzie już nałożyć głową…\nTwardowski na koncept wpada\nI zadaje trudność nową.\n"}]})
 
   (d/transact conn {:tx-data [{:lesson/id #uuid"1b2d87cb-ddfa-4b6c-b991-4c48301e41a0"
                                :lesson/editor "
@@ -132,6 +151,8 @@
   ;; connection
   (d/db conn)
 
-  (lesson-by-type :project)
+  (lesson-by-type :exercise)
+
+  (lesson-by-id #uuid "88ea5250-fafd-44c2-8d10-5aa69c942a41")
 
   )
