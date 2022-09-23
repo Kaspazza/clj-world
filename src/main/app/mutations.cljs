@@ -5,6 +5,7 @@
             [app.ui.lesson :as lesson :refer [Lesson]]
             [com.fulcrologic.rad.routing :as routing]
             [applied-science.js-interop :as j]
+            [clojure.string :as cstr]
             [nextjournal.clojure-mode.test-utils :as test-utils]
             [app.code-mirror.sci :as sci]
             [com.fulcrologic.fulcro.components :as comp]
@@ -39,6 +40,14 @@
   (action [{:keys [_app state]}]
     (swap! state update-in [:lesson/id lesson-id :ui/repl-state] (fn [v]
                                                                    (into [] (conj v {:line (str evaluated-line) :value (str repl-value)}))))))
+
+(defmutation update-editor-text [{:keys [editor-id new-text-obj]}]
+  (action [{:keys [_app state]}]
+          (let [text (if (.-text new-text-obj)
+                       (cstr/join "\n" (.-text new-text-obj))
+                       (cstr/join "\n" (map (fn [x] (cstr/join "\n" (.-text x))) (.-children new-text-obj))))]
+          (swap! state assoc-in [:editor/id editor-id :editor/text] text))))
+
 
 (defmutation change-editor-tab [{:keys [lesson-id tab-type]}]
   (action [{:keys [_app state]}]
