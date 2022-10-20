@@ -12,6 +12,8 @@
                                   :sha "a408a8cb2154107e80bb8deae0cda48be911571f"}
 
         hickory/hickory {:mvn/version "0.7.1"}
+        com.draines/postal {:mvn/version "2.0.5"}
+
         camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
 
         markdown-clj/markdown-clj {:mvn/version "1.11.3"}
@@ -24,7 +26,9 @@
         com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}   ; hooks slf4j to timbre
         com.datomic/client-cloud {:mvn/version "1.0.120"}}
 
- :aliases {:dev {:extra-paths ["src/dev"]
+ :aliases {:dev {
+                 ;:main-opts ["-i" "src/main/app/server.clj" "-e" "(in-ns,'app.server)" "-r"]
+                 :extra-paths ["src/dev"]
                  :extra-deps {holyjak/fulcro-troubleshooting
                               {:git/url "https://github.com/holyjak/fulcro-troubleshooting"
                                ;; BEWARE: run `clojure -X:deps git-resolve-tags` to insert the correct :sha
